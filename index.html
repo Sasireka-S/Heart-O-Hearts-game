@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Play my Game</title>
+    <style>
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1.6;
+    text-align: center;   
+    height: 100%;
+    background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; 
+}
+
+img{
+
+    width: 100px;
+    text-align: center;
+    margin-top: 20px;
+    margin-right: 30px;
+    text-align: center;
+    align-items: center;
+}
+
+.dice-container{
+    display: flex;
+    flex-direction: row;
+}
+
+.container{
+    width:40%;
+    padding: 50px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+}
+
+button{
+    background-color: #e92e3d;
+    height: 20%;
+    border: none;
+    outline: none;
+    color: #ffffff;
+    padding: 15px;
+    width: 50%;
+    letter-spacing: 1px;
+    border-radius: 5px;
+    margin-top: 50px;
+    margin-left: 30px;
+    box-shadow: 1px 1px #ffffff;
+}
+
+.shake{
+    animation: shake 0.5s infinite;
+}
+@keyframes shake {
+    0%{
+        transform: rotate(50deg);
+    }
+    50%{
+        transform: rotate(-50deg);
+    }
+    100%{
+        transform: rotate(50deg);
+    }
+}
+
+.main-board{
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.block{
+    width: 75px;
+    padding: 0%;
+    text-align: center;
+    line-height: 58px;
+    font-size: 30px;
+    border: 1px solid rgb(240, 241, 238);
+}
+.row{
+    display: flex;
+    flex-direction: row;
+    padding: 0%;
+    text-align: center;
+    line-height: 75px;
+    font-size: 30px;
+    border: 1px solid rgb(247, 246, 246);
+}
+
+.active{
+    background: #FAC898;
+}
+
+.blue{
+    background-image: url("https://i.postimg.cc/wBqgxchj/blue.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.red{
+    background-image: url("https://i.postimg.cc/jSXChjcC/red.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.lightgreen{
+    background-image: url("https://i.postimg.cc/rF5DKjt1/lightgreen.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.orange{
+    background-image: url("https://i.postimg.cc/QN2B8wVN/orange.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.violet{
+    background-image: url("https://i.postimg.cc/sXBXy4rZ/violet.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.yellow{
+    background-image: url("https://i.postimg.cc/d1z00ZsN/yellow.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.darkblue{
+    background-image: url("https://i.postimg.cc/bvm8ZDTH/darkblue.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+.black{
+    background-image: url("https://i.postimg.cc/kgF7dhRH/black.png");
+    background-repeat: no-repeat;
+    background-size: 75px 60px;
+}
+</style>
+<script>
+const n = 9;
+const matrixArray = [];
+const l = ['assets/cloud.jpg', 'assets/twitter.jpg', "assets/tower.jpg", "assets/moon.jpg", "assets/taj.jpg"]
+const ladderMap = {
+    14:50,
+    22:24,
+    30:34,
+    38:44,
+    46:54,
+    55:63, 
+    58:60,
+    65:71,
+    66:70
+}
+const blueMap = {
+    46 : 54,
+    54 : 100,
+    65 : 71,
+    71 : 100
+}
+const violetMap = {
+    55 : 63,
+    63 : 100
+}
+const yellowMap = {
+    14 : 50,
+    50 : 100
+}
+const darkblueMap = {
+    58 : 60,
+    60 : 100,
+    22 : 24,
+    24 : 100
+}
+const blackMap = {
+    66 : 70,
+    70 : 100
+}
+const lightgreenMap = {
+    38 : 44,
+    44 : 100
+}
+const redMap = {
+    30 : 34,
+    34 : 100
+}
+const orangeMap = {
+    45 : 54,
+    54 : 100
+}
+const LADDER_CLASS = "ladder";
+const lst = ["assets/congrats1.jpg","assets/congrats2.jpg","assets/congrats3.jpg"]
+function createMatrix(){
+    let block = (n * n) + 1;
+    for(let column=1;column<=n;column++){
+        let rows = [];
+            if (column % 2 === 0){
+                block = block - n;
+                let value = block;
+                for(let row=1;row<=n;row++){
+                    rows.push(value);
+                    value++
+                }
+            }else{
+                for(let row=1;row<=n;row++){
+                block = block - 1;
+                rows.push(block);
+                }
+            }
+        matrixArray.push(rows)
+    }
+    createBoard(matrixArray) 
+}
+
+function createBoard(matrixArray){
+    const board = document.querySelector('.main-board')
+    let str = "";
+    matrixArray.map(row => {
+        str += `
+            <div class="row">`
+        row.map(block => {
+            str += `
+                    <div class="block ${
+                        blueMap[block] ? "blue" : ""
+                    }
+                    ${
+                        violetMap[block] ? "violet" : ""
+                    }
+                    ${
+                        yellowMap[block] ? "yellow" : ""
+                    }
+                    ${
+                        darkblueMap[block] ? "darkblue" : ""
+                    }
+                    ${
+                        blackMap[block] ? "black" : ""
+                    }
+                    ${
+                        lightgreenMap[block] ? "lightgreen" : ""
+                    }
+                    ${
+                        redMap[block] ? "red" : ""
+                    }
+                    ${block === 1 ? 'active' : ''} " 
+                    data-value=${block}>
+                      ${block}
+                    </div>
+                `
+            })   
+        str += `</div>`
+    })
+    board.innerHTML = str;
+}
+
+function roll(){
+    const dice = document.querySelector("img");
+    dice.classList.add("shake");
+    setTimeout(() => {
+        dice.classList.remove("shake");
+        const diceValue = Math.ceil(Math.random()* 6);
+        if(diceValue == 1)
+        {
+        document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/FR1v3rCt/dice1.png`); 
+        }
+        else if(diceValue == 2)
+        {
+         document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/63SXhkF8/dice2.png`);
+        }
+        else if(diceValue == 3)
+        {
+         document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/L4YYM290/dice3.png`);
+        }
+        else if(diceValue == 4)
+        {
+         document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/pyMMwDWx/dice4.png`);
+        }
+        else if(diceValue == 5)
+        {
+         document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/KYpzdsd2/dice5.png`);
+        }
+        else
+        {
+        document.querySelector("#dice-id").setAttribute("src", `https://i.postimg.cc/8CzcXVX4/dice6.png`);
+        }
+        changeCurrentPosition(diceValue);
+    }, 1000); 
+}
+
+function changeCurrentPosition(diceValue){
+    const activeBlock = document.querySelector('.active');
+    const activeBlockValue = parseInt(activeBlock.outerText);
+    let presentValue = diceValue + activeBlockValue;
+    
+    
+    if (ladderMap[presentValue]){
+        presentValue = ladderMap[presentValue];
+        alert("Wow a Heart !!!")
+        if (presentValue == 50) 
+        {
+            window.location.href=l[0]; 
+        }
+        else if (presentValue == 24) 
+        {
+            window.location.href=l[1];
+        }
+        else if(presentValue == 34)
+        {
+            window.location.href=l[2];
+        }
+        else if(presentValue == 44)
+        {
+            window.location.href=l[3];
+        }
+        else if(presentValue == 63)
+        {
+            window.location.href=l[4];
+        }
+        changeActiveClass(presentValue);
+    }
+    if (presentValue <= (n*n)){
+        changeActiveClass(presentValue);
+    }
+    if(presentValue == (n*n))
+    {
+        alert("You Won");
+        window.location.href=lst[Math.ceil(Math.random()* 3)];
+    }
+}
+
+function changeActiveClass(presentValue){
+    const activeBlock = document.querySelector('.active');
+    activeBlock.classList.remove('active');
+    const block = document.querySelector(`[data-value = "${presentValue}"]`);
+    block.classList.add('active');
+}
+</script>
+</head>
+<body onload="createMatrix()" background="assets/flr.jpg">
+    <div class="container">
+        <div class="main-board"></div>  
+        <div class="dice-container">
+            <img src="https://i.postimg.cc/FR1v3rCt/dice1.png" id="dice-id"/>
+            <button onclick="roll()">Roll Dice</button>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
